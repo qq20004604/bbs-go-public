@@ -1,0 +1,77 @@
+mysql:
+  # 测试环境
+  dev:
+    # 数据账号
+    username: "bbs_test_manager"
+    # 数据库密码
+    password: ""
+    # 数据库地址
+    Host: ""
+    # 数据库端口
+    Port: 3306
+    # 测试环境数据库的db名
+    Dbname: "bbs_test"
+  # 生产环境
+  prod:
+    username: "bbs_test"
+    password: ""
+    Host: ""
+    Port: 3306
+    Dbname: "bbs"
+
+redis:
+  # 测试环境
+  dev:
+    addr: ""
+    password: ""
+    db: 0
+
+  # 生产环境
+  prod:
+
+# 运行环境设置
+runtimeConfig:
+  # 这里会基于 default 的值，根据环境，将对应的环境（dev或者prod）的值合并进去获得最终结果
+  # 需要注意的是：假设dev/prod等某个字段有值，但该值为空值，例如int类型值为0，那么最终结果将不会取空值。需要尽量避免这种情况，否则需要特殊设置。
+  default:
+    # 留空，该变量用于读取运行时的环境变量
+    Env: ''
+    # 在输出日志中添加文件名和方法信息
+    SetReportCaller: true
+    ServerName: '论坛服务'
+    BaseUrl: 'bbs/'
+    ServerURL: ''
+    # 日志最大保留时间（天）
+    LogMaxAge: 14
+    # 日志切分间隔（小时）
+    LogRotationTime: 24
+    # 日志显示级别： （参照 logrus.go 文件的 ParseLevel 函数）
+    #            panic 极为严重错误
+    #            fatal 表示发生了严重的错误，导致程序无法继续运行，
+    #            error 表示发生了错误，但程序仍然可以继续运行
+    #            warn warning 表示发生了潜在的问题，可能会导致错误
+    #            info 表示正常的程序操作信息，
+    #            debug 表示详细的调试信息，通常仅在开发和调试过程中使用
+    #            trace 表示更详细的调试信息，比 Debug 级别更详细
+    LogLevel: "info"
+    # 创建第一个超级管理员用户，默认是不创建的。用户名默认是 admin，密码是 12345678
+    CreateFirstAdmin: false
+    FirstAdminAccount: "admin"
+    # 不设置时，默认值为超级管理员
+    FirstAdminName: "超级管理员"
+    FirstAdminPassword: "12345678"
+  dev:
+    Env: 'DEV'
+    LogLevel: "debug"
+    CreateFirstAdmin: true
+  prod:
+    Env: 'PROD'
+
+commonConfig: # 通用变量，不区分环境
+  # 密码加盐用的哈希值，我随便写的。正式运行后，请勿丢失……不然集体登录失败……
+  PasswordSalt: "vsdviajei0j4gwvrvn2ufeovwmsvin"
+  # 密码 hash 后的长度，不应该超过 BBSUser.Password 的最大长度，否则会导致出错。
+  # 这个值的上下限是 8 ~ 64，超出会设置为对应的上下限
+  PasswordLengthAfterHash: 40
+  # bbs的token字段名
+  HeaderTokenName: "bbs-token"

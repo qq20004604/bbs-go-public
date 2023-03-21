@@ -1,0 +1,19 @@
+BBSUser: # 论坛用户表
+  - ID: 用户ID，uint
+  - AuthID: 在Auth系统里的ID，识别用户时，以这个为准，uint
+  - Account: 登录账号，string
+  - Name: 用户名，string
+  - Password: 密码，string
+  - Status: 用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除），int
+  - LastLoginAt: 用户最后登录时间，utils.DateTime
+  - LastLoginIP: 用户最后登录IP地址，支持IPV6，string
+  - Email: 用户邮箱（长度最大为60），string
+  - Mobile: 用户手机号码，string
+  - Gender: 用户性别（0 未知、1 男、2 女），int
+  - Birthday: 用户生日，utils.DateTime
+  - Signature: 用户个性签名，string
+  - IsAdmin: 是否为管理员(0 普通、10 管理员、20 超级管理员），int
+  - Company: 用户所在公司，string
+  - Website: 用户个人网站，string
+  - CreatedAt: 创建时间，utils.DateTime
+  - UpdatedAt: 更新时间，utils.DateTime

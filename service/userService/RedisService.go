@@ -1,0 +1,5 @@
+package userService
+
+func MakeRedisKey() {
+
+}
