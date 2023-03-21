@@ -3,6 +3,7 @@ package userService
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	"main/config"
 	"main/db"
@@ -68,12 +69,28 @@ func saltAndHashPassword(account, password string) string {
 
 /*beforeCreateUser
 * @Description: 在创建用户之前，进行一些特殊处理
-* @param userService
+* @param user	用户信息
 * @return error
  */
 func beforeCreateUser(user *model.BBSUser) error {
-	// 对密码进行加密处理，只存储加密后的密码
+	// 1. 对密码进行加密处理，只存储加密后的密码
 	pwWithSalt := saltAndHashPassword(user.Name, user.Password)
 	user.Password = pwWithSalt
+
+	// 2. 对用户进行查重，如果该用户重复的话，则不允许创建
+	var userData = BBSUserExist{
+		AuthID:  user.AuthID,
+		Account: user.Account,
+		Name:    user.Name,
+		Email:   user.Email,
+		Mobile:  user.Mobile,
+	}
+	if isExist, err := IsUserExistByAccount(&userData); err != nil {
+		return err
+	} else if isExist {
+		return errors.New("该用户已存在")
+	}
+
+	// final. 一切正常
 	return nil
 }

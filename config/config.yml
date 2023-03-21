@@ -69,7 +69,7 @@ runtimeConfig:
 
 commonConfig: # 通用变量，不区分环境
   # 密码加盐用的哈希值，我随便写的。正式运行后，请勿丢失……不然集体登录失败……
-  PasswordSalt: "vsdviajei0j4gwvrvn2ufeovwmsvin"
+  PasswordSalt: "vavewv231er34ggv12fv"
   # 密码 hash 后的长度，不应该超过 BBSUser.Password 的最大长度，否则会导致出错。
   # 这个值的上下限是 8 ~ 64，超出会设置为对应的上下限
   PasswordLengthAfterHash: 40

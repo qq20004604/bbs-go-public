@@ -21,38 +21,39 @@ func CreateFirstSuperAdmin() {
 		return
 	}
 
+	// 添加默认值：账号、用户名、密码
 	var firstAdminName string
 	if len(config.Config.Runtime.FirstAdminName) > 0 {
 		firstAdminName = config.Config.Runtime.FirstAdminName
 	} else {
 		firstAdminName = "超级管理员"
 	}
+	var firstAdminAccount string
+	if len(config.Config.Runtime.FirstAdminAccount) > 0 {
+		firstAdminAccount = config.Config.Runtime.FirstAdminAccount
+	} else {
+		firstAdminAccount = "admin"
+	}
+	var firstAdminPassword string
+	if len(config.Config.Runtime.FirstAdminPassword) > 0 {
+		firstAdminPassword = config.Config.Runtime.FirstAdminPassword
+	} else {
+		firstAdminPassword = "12345678"
+	}
 	// 2. 查看超级管理员账号是否已创建（避免重复创建）
-	log.Info("初始化超级管理员账号：开始")
-	var userData = userService.BBSUserExist{
-		Account: config.Config.Runtime.FirstAdminAccount,
-		Name:    firstAdminName,
-	}
-
-	if isExist, err := userService.IsUserExistByAccount(&userData); err != nil {
-		log.Error("超级管理员：创建失败，", err)
-		return
-	} else if isExist {
-		log.Info("超级管理员：已存在，无需创建")
-		return
-	}
-	log.Info("超级管理员：开始创建")
+	log.Info("超级管理员账号：开始创建")
 	var firstAdmin = model.BBSUser{
-		ID:      0,
-		AuthID:  0,
-		Account: config.Config.Runtime.FirstAdminAccount,
-		Name:    config.Config.Runtime.FirstAdminName,
-		IsAdmin: 20,
+		ID:       0,
+		AuthID:   0,
+		Account:  firstAdminAccount,
+		Name:     firstAdminName,
+		Password: firstAdminPassword,
+		IsAdmin:  20,
 	}
 
 	if err := userService.CreateUser(&firstAdmin); err != nil {
-		log.Error("超级管理员创建失败")
+		log.Error("超级管理员账号：创建失败，", err)
 	} else {
-		log.Info("超级管理员创建成功")
+		log.Info("超级管理员账号：创建成功")
 	}
 }
