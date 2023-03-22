@@ -3,13 +3,13 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"main/config"
-	"main/controller"
+	"main/controller/BBSUserManage"
 )
 
 func LoadRoute(r *gin.Engine) {
 	BaseUrl := config.Config.Runtime.BaseUrl
-	r.POST(BaseUrl+"test", controller.Test)
+	// 登录
+	r.POST(BaseUrl+"login", BBSUserManage.UserLogin)
 
-	//r.POST(BaseUrl+"createUser", BBSUserManage.CreateUser)
-
+	InternalRouter(r)
 }

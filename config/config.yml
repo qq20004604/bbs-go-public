@@ -36,10 +36,11 @@ runtimeConfig:
   default:
     # 留空，该变量用于读取运行时的环境变量
     Env: ''
+    # 意味着每个接口的路径之前，都需要添加这一段字符串
+    BaseUrl: 'bbs/'
     # 在输出日志中添加文件名和方法信息
     SetReportCaller: true
     ServerName: '论坛服务'
-    BaseUrl: 'bbs/'
     ServerURL: ''
     # 日志最大保留时间（天）
     LogMaxAge: 14
@@ -56,9 +57,13 @@ runtimeConfig:
     LogLevel: "info"
     # 创建第一个超级管理员用户，默认是不创建的。用户名默认是 admin，密码是 12345678
     CreateFirstAdmin: false
+    # 不设置时，默认为 admin，以下三条配置的未配置选项，在代码里已硬写死
+    # 注意：长度限制为 4~20，否则无法登陆。如需要更改，请自行更改校验相关逻辑
     FirstAdminAccount: "admin"
-    # 不设置时，默认值为超级管理员
+    # 不设置时，默认值为 超级管理员
     FirstAdminName: "超级管理员"
+    # 不设置时，默认为12345678
+    # 注意：长度限制为 6~40，否则无法登陆。如需要更改，请自行更改校验相关逻辑
     FirstAdminPassword: "12345678"
   dev:
     Env: 'DEV'
@@ -75,3 +80,5 @@ commonConfig: # 通用变量，不区分环境
   PasswordLengthAfterHash: 40
   # bbs的token字段名
   HeaderTokenName: "bbs-token"
+  # 登录过期时间（单位：小时），168小时表示7天。如果不设置或者设置为0，则默认为7天
+  LoginExpireTime: 168

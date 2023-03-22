@@ -3,7 +3,6 @@ package scripts
 import (
 	log "github.com/sirupsen/logrus"
 	"main/config"
-	"main/controller/BBSUserManage"
 	"main/db"
 	"main/handlers"
 	"main/initRuntime"
@@ -27,5 +26,5 @@ func BeforeRunServer() {
 		return
 	}
 	// 创建超级管理员账号
-	BBSUserManage.CreateFirstSuperAdmin()
+	CreateFirstSuperAdmin()
 }

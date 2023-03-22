@@ -7,13 +7,10 @@ import (
 )
 
 /*InternalRouter
-* @Description: 私有路径和服务，故开源项目里，这里为空
+* @Description: 私有路径和服务，不对外开放的，都放在这里
 * @param r
  */
 func InternalRouter(r *gin.Engine) {
 	BaseUrl := config.Config.Runtime.BaseUrl
 	r.POST(BaseUrl+"test", controller.Test)
-
-	//r.POST(BaseUrl+"createUser", BBSUserManage.CreateUser)
-	InternalRouter(r)
 }

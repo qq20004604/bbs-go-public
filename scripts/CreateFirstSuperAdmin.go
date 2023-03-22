@@ -1,4 +1,4 @@
-package BBSUserManage
+package scripts
 
 import (
 	"context"
@@ -49,10 +49,20 @@ func CreateFirstSuperAdmin() {
 		Name:     firstAdminName,
 		Password: firstAdminPassword,
 		IsAdmin:  20,
+		Status:   0,
+		//LastLoginAt: utils.DateTime{},
+		LastLoginIP: "0.0.0.0",
+		Email:       "test@test.test",
+		Mobile:      "12345678901",
+		Gender:      0,
+		//Birthday:    utils.DateTime{},
+		Signature: "测试 Signature",
+		Company:   "测试 Company",
+		Website:   "测试 Website",
 	}
 
-	if err := userService.CreateUser(&firstAdmin); err != nil {
-		log.Error("超级管理员账号：创建失败，", err)
+	if err := userService.CreateBBSUser(&firstAdmin); err != nil {
+		log.Info("超级管理员账号：创建失败，", err)
 	} else {
 		log.Info("超级管理员账号：创建成功")
 	}

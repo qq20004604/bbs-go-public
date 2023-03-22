@@ -45,7 +45,6 @@ func (t DateTime) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return t.Time, nil
-	//return []byte(time.Time(t).Format(TimeFormat)), nil
 }
 
 // 4. 为 DateTime 实现 Scan 方法，读取数据库时会调用该方法将时间数据转换成自定义时间类型；

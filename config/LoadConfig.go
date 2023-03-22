@@ -79,9 +79,10 @@ type RuntimeConfig struct {
 // CommonConfig
 // @Description: 通用设置
 type CommonConfig struct {
-	PasswordSalt            string `yaml:"PasswordSalt"`
-	PasswordLengthAfterHash uint   `yaml:"PasswordLengthAfterHash"`
-	HeaderTokenName         string `yaml:"HeaderTokenName"`
+	PasswordSalt            string        `yaml:"PasswordSalt"`
+	PasswordLengthAfterHash uint          `yaml:"PasswordLengthAfterHash"`
+	HeaderTokenName         string        `yaml:"HeaderTokenName"`
+	LoginExpireTime         time.Duration `yaml:"LoginExpireTime"`
 }
 
 // Config 全局变量
@@ -100,6 +101,7 @@ func loadConfiguration() {
 	}()
 
 	file, err := ioutil.ReadFile("config/config.yml")
+	//file, err := ioutil.ReadFile("config/internalConfig.yml")
 	if err != nil {
 		log.Fatal("YML加载失败：文件打开失败。", err.Error())
 	}

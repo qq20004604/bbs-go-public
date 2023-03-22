@@ -7,7 +7,7 @@ import (
 
 // CreateUserRequest 用于接收前端传递的创建新用户所需信息的 JSON 数据
 type CreateUserRequest struct {
-	Account  string  `json:"account"`
+	Account  string  `json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Name     string  `json:"name" binding:"required,min=2,max=20" label:"用户名"`    // 用户名
 	Password string  `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
 	Email    *string `json:"email" binding:"omitempty,email" label:"邮箱"`          // 用户邮箱（非必填）
@@ -16,10 +16,16 @@ type CreateUserRequest struct {
 	Company  *string `json:"company" binding:"omitempty,max=20" label:"公司"`       // 用户所在公司（非必填）
 }
 
-/*BaseUserInfoResponse
+// UserLoginRequest 用于接收前端传递的创建新用户所需信息的 JSON 数据
+type UserLoginRequest struct {
+	Account  string `json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Password string `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
+}
+
+/*BaseBBSUserResponse
 * @Description: 基本的用户信息
  */
-type BaseUserInfoResponse struct {
+type BaseBBSUserResponse struct {
 	ID        uint           `json:"id"`
 	Account   string         `json:"account"`
 	Name      string         `json:"name"`
@@ -36,13 +42,28 @@ type BaseUserInfoResponse struct {
 	UpdatedAt utils.DateTime `json:"updated_at"`
 }
 
-/*AdvanceUserInfoResponse
+/*AdvanceBBSUserResponse
 * @Description: 进阶用户信息
  */
-type AdvanceUserInfoResponse struct {
-	BaseUserInfoResponse
+type AdvanceBBSUserResponse struct {
+	// BaseBBSUserResponse 基础用户信息
+	ID        uint           `json:"id"`
+	Account   string         `json:"account"`
+	Name      string         `json:"name"`
+	Status    string         `json:"status"`
+	Email     string         `json:"email"`
+	Mobile    string         `json:"mobile"`
+	Gender    string         `json:"gender"`
+	Birthday  utils.DateTime `json:"birthday"`
+	Signature string         `json:"signature"`
+	IsAdmin   string         `json:"is_admin"`
+	Company   string         `json:"company"`
+	Website   string         `json:"website"`
+	CreatedAt utils.DateTime `json:"created_at"`
+	UpdatedAt utils.DateTime `json:"updated_at"`
 
-	AuthID      uint           `json:"auth_id"`
+	// 额外用户信息
+	//AuthID      uint           `json:"auth_id"`
 	LastLoginAt utils.DateTime `json:"last_login_at"`
 	LastLoginIP string         `json:"last_login_ip"`
 }
@@ -58,12 +79,12 @@ type TokenUserInfo struct {
 	IsAdmin int    `json:"is_admin"`
 }
 
-/*getStatusText
+/*GetBBSStatusText
 * @Description: 获取用户状态的文字信息
 * @param status
 * @return string
  */
-func getStatusText(status int) string {
+func GetBBSStatusText(status int) string {
 	switch status {
 	case 0:
 		return "正常"
@@ -114,75 +135,53 @@ func getAdminStatus(status int) string {
 	}
 }
 
-/*ConvertBBSUserToBaseUserInfoResponse
+/*ConvertFromBBSUser
 * @Description: 将数据库模型 BBSUser 的数据转为 UserInfoResponse 的结构
 * @param userService
 * @return UserInfoResponse
  */
-func ConvertBBSUserToBaseUserInfoResponse(user *model.BBSUser) BaseUserInfoResponse {
-	var userRes = BaseUserInfoResponse{
-		ID:        user.ID,
-		Account:   user.Account,
-		Name:      user.Name,
-		Status:    getStatusText(user.Status),
-		Email:     user.Email,
-		Mobile:    user.Mobile,
-		Gender:    getGender(user.Gender),
-		Birthday:  utils.DateTime{},
-		Signature: user.Signature,
-		IsAdmin:   getAdminStatus(user.IsAdmin),
-		Company:   user.Company,
-		Website:   user.Website,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}
-
-	return userRes
+func (baseBBSUser *BaseBBSUserResponse) ConvertFromBBSUser(user *model.BBSUser) {
+	baseBBSUser.ID = user.ID
+	baseBBSUser.Account = user.Account
+	baseBBSUser.Name = user.Name
+	baseBBSUser.Status = GetBBSStatusText(user.Status)
+	baseBBSUser.Email = user.Email
+	baseBBSUser.Mobile = user.Mobile
+	baseBBSUser.Gender = getGender(user.Gender)
+	baseBBSUser.Birthday = utils.DateTime{}
+	baseBBSUser.Signature = user.Signature
+	baseBBSUser.IsAdmin = getAdminStatus(user.IsAdmin)
+	baseBBSUser.Company = user.Company
+	baseBBSUser.Website = user.Website
+	baseBBSUser.CreatedAt = user.CreatedAt
+	baseBBSUser.UpdatedAt = user.UpdatedAt
 }
 
-/*ConvertBBSUserToAdvanceUserInfoResponse
+/*ConvertFromBBSUser
 * @Description: 返回更进一步的用户信息
 * @param userService
-* @return AdvanceUserInfoResponse
+* @return AdvanceBBSUserResponse
  */
-func ConvertBBSUserToAdvanceUserInfoResponse(user *model.BBSUser) AdvanceUserInfoResponse {
-	var userRes = AdvanceUserInfoResponse{
-		BaseUserInfoResponse: BaseUserInfoResponse{
-			ID:        user.ID,
-			Account:   user.Account,
-			Name:      user.Name,
-			Status:    getStatusText(user.Status),
-			Email:     user.Email,
-			Mobile:    user.Mobile,
-			Gender:    getGender(user.Gender),
-			Birthday:  utils.DateTime{},
-			Signature: user.Signature,
-			IsAdmin:   getAdminStatus(user.IsAdmin),
-			Company:   user.Company,
-			Website:   user.Website,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-		},
-		//ID:          userService.ID,
-		//Account:     userService.Account,
-		//Name:        userService.Name,
-		//Status:      getStatusText(userService.Status),
-		//Email:       userService.Email,
-		//Mobile:      userService.Mobile,
-		//Gender:      getGender(userService.Gender),
-		//Birthday:    utils.DateTime{},
-		//Signature:   userService.Signature,
-		//IsAdmin:     getAdminStatus(userService.IsAdmin),
-		//Company:     userService.Company,
-		//Website:     userService.Website,
-		//CreatedAt:   userService.CreatedAt,
-		//UpdatedAt:   userService.UpdatedAt,
-		AuthID:      user.AuthID,
-		LastLoginAt: user.LastLoginAt,
-		LastLoginIP: user.LastLoginIP,
-	}
+func (advanceBBSUser *AdvanceBBSUserResponse) ConvertFromBBSUser(user *model.BBSUser) {
+	advanceBBSUser.ID = user.ID
+	advanceBBSUser.Account = user.Account
+	advanceBBSUser.Name = user.Name
+	advanceBBSUser.Status = GetBBSStatusText(user.Status)
+	advanceBBSUser.Email = user.Email
+	advanceBBSUser.Mobile = user.Mobile
+	advanceBBSUser.Gender = getGender(user.Gender)
+	advanceBBSUser.Birthday = utils.DateTime{}
+	advanceBBSUser.Signature = user.Signature
+	advanceBBSUser.IsAdmin = getAdminStatus(user.IsAdmin)
+	advanceBBSUser.Company = user.Company
+	advanceBBSUser.Website = user.Website
+	advanceBBSUser.CreatedAt = user.CreatedAt
+	advanceBBSUser.UpdatedAt = user.UpdatedAt
 
-	return userRes
+	// 以上是基本用户信息，以下的 advanceBBSUser 里额外的信息
+	//advanceBBSUser.AuthID = user.AuthID
+	advanceBBSUser.LastLoginAt = user.LastLoginAt
+	advanceBBSUser.LastLoginIP = user.LastLoginIP
 }
 
 /*ConvertBBSUserToTokenUserInfo
