@@ -79,60 +79,15 @@ type TokenUserInfo struct {
 	IsAdmin int    `json:"is_admin"`
 }
 
-/*GetBBSStatusText
-* @Description: 获取用户状态的文字信息
-* @param status
-* @return string
+/*BBSUserExist
+* @Description: 用于判断用户是否存在的结构体，本结构体里的字段，在数据库里应该都是唯一的
  */
-func GetBBSStatusText(status int) string {
-	switch status {
-	case 0:
-		return "正常"
-	case 1:
-		return "禁言"
-	case 2:
-		return "用户已离职"
-	case 3:
-		return "账号已删除"
-	default:
-		return "未知状态"
-	}
-}
-
-/*getGender
-* @Description: 获取性别
-* @param status
-* @return string
- */
-func getGender(status int) string {
-	switch status {
-	case 1:
-		return "男"
-	case 2:
-		return "女"
-	case 3:
-		return "男同"
-	case 4:
-		return "女同"
-	default:
-		return "未知状态"
-	}
-}
-
-/*getAdminStatus
-* @Description: 获取管理员相关状态
-* @param status
-* @return string
- */
-func getAdminStatus(status int) string {
-	switch status {
-	case 10:
-		return "管理员"
-	case 20:
-		return "超级管理员"
-	default:
-		return "普通"
-	}
+type BBSUserExist struct {
+	AuthID  uint   `json:"auth_id"`
+	Account string `json:"account"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Mobile  string `json:"mobile"`
 }
 
 /*ConvertFromBBSUser
@@ -144,13 +99,13 @@ func (baseBBSUser *BaseBBSUserResponse) ConvertFromBBSUser(user *model.BBSUser) 
 	baseBBSUser.ID = user.ID
 	baseBBSUser.Account = user.Account
 	baseBBSUser.Name = user.Name
-	baseBBSUser.Status = GetBBSStatusText(user.Status)
+	baseBBSUser.Status = user.GetBBSStatusText()
 	baseBBSUser.Email = user.Email
 	baseBBSUser.Mobile = user.Mobile
-	baseBBSUser.Gender = getGender(user.Gender)
+	baseBBSUser.Gender = user.GetGender()
 	baseBBSUser.Birthday = utils.DateTime{}
 	baseBBSUser.Signature = user.Signature
-	baseBBSUser.IsAdmin = getAdminStatus(user.IsAdmin)
+	baseBBSUser.IsAdmin = user.GetAdminStatus()
 	baseBBSUser.Company = user.Company
 	baseBBSUser.Website = user.Website
 	baseBBSUser.CreatedAt = user.CreatedAt
@@ -166,13 +121,13 @@ func (advanceBBSUser *AdvanceBBSUserResponse) ConvertFromBBSUser(user *model.BBS
 	advanceBBSUser.ID = user.ID
 	advanceBBSUser.Account = user.Account
 	advanceBBSUser.Name = user.Name
-	advanceBBSUser.Status = GetBBSStatusText(user.Status)
+	advanceBBSUser.Status = user.GetBBSStatusText()
 	advanceBBSUser.Email = user.Email
 	advanceBBSUser.Mobile = user.Mobile
-	advanceBBSUser.Gender = getGender(user.Gender)
+	advanceBBSUser.Gender = user.GetGender()
 	advanceBBSUser.Birthday = utils.DateTime{}
 	advanceBBSUser.Signature = user.Signature
-	advanceBBSUser.IsAdmin = getAdminStatus(user.IsAdmin)
+	advanceBBSUser.IsAdmin = user.GetAdminStatus()
 	advanceBBSUser.Company = user.Company
 	advanceBBSUser.Website = user.Website
 	advanceBBSUser.CreatedAt = user.CreatedAt
@@ -193,15 +148,4 @@ func ConvertBBSUserToTokenUserInfo(user *model.BBSUser) TokenUserInfo {
 	var data TokenUserInfo
 	utils.MergeData(&data, user)
 	return data
-}
-
-/*BBSUserExist
-* @Description: 用于判断用户是否存在的结构体，本结构体里的字段，在数据库里应该都是唯一的
- */
-type BBSUserExist struct {
-	AuthID  uint   `json:"auth_id"`
-	Account string `json:"account"`
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Mobile  string `json:"mobile"`
 }

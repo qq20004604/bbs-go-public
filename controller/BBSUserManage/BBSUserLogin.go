@@ -81,9 +81,9 @@ func isLoginSuccess(c *gin.Context, loginData *userService.UserLoginRequest) (us
 	if user.Password != pwBySalt {
 		return userService.AdvanceBBSUserResponse{}, errors.New("密码错误")
 	}
-	// 如果 user.Status 不为 0，意味着用户状态错误，调用 getStatusText(user.Status) 则返回错误提示信息
+	// 如果 user.Status 不为 0，意味着用户状态错误，调用 GetStatusText(user.Status) 则返回错误提示信息
 	if user.Status != 0 {
-		msg := fmt.Sprintf("用户状态错误：%s", userService.GetBBSStatusText(user.Status))
+		msg := fmt.Sprintf("用户状态错误：%s", user.GetBBSStatusText())
 		return userService.AdvanceBBSUserResponse{}, errors.New(msg)
 	}
 

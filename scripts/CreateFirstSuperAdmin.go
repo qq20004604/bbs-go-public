@@ -54,7 +54,7 @@ func CreateFirstSuperAdmin() {
 		LastLoginIP: "0.0.0.0",
 		Email:       "test@test.test",
 		Mobile:      "12345678901",
-		Gender:      0,
+		Gender:      1,
 		//Birthday:    utils.DateTime{},
 		Signature: "测试 Signature",
 		Company:   "测试 Company",
