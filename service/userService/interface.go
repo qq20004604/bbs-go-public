@@ -26,13 +26,26 @@ type UserRegisterRequest struct {
 	Account   string         `json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Password  string         `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
 	Name      string         `json:"name" binding:"required,max=20" label:"用户名"`
-	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"用户邮箱"`
+	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender    string         `json:"gender" binding:"omitempty,gte=0,lte=4" label:"用户性别"`
+	Gender    int            `json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
 	Birthday  utils.DateTime `json:"birthday"`
 	Signature string         `json:"signature" binding:"omitempty,max=255" label:"个性签名"`
-	Company   string         `json:"company" binding:"omitempty,max=20" label:"所在公司"`
+	Company   string         `json:"company" binding:"omitempty,max=20" label:"公司"`
 	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
+}
+
+func (registerData *UserRegisterRequest) ConvertToBBSUser(user *model.BBSUser) {
+	user.Account = registerData.Account
+	user.Password = registerData.Password
+	user.Name = registerData.Name
+	user.Email = registerData.Email
+	user.Mobile = registerData.Mobile
+	user.Gender = registerData.Gender
+	user.Birthday = registerData.Birthday
+	user.Signature = registerData.Signature
+	user.Company = registerData.Company
+	user.Website = registerData.Website
 }
 
 /*BaseBBSUserResponse

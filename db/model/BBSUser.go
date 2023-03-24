@@ -45,21 +45,29 @@ func (user *BBSUser) UpdateAfterLogin(ip string) {
 	return
 }
 
+const (
+	UserStatusNormal        = 0
+	UserStatusMuted         = 1
+	UserStatusResigned      = 2
+	UserStatusDeleted       = 3
+	UserStatusPendingReview = 4
+)
+
 /*GetBBSStatusText
 * @Description: 获取用户状态的文字信息
 * @return string
  */
 func (user *BBSUser) GetBBSStatusText() string {
 	switch user.Status {
-	case 0:
+	case UserStatusNormal:
 		return "正常"
-	case 1:
+	case UserStatusMuted:
 		return "禁言"
-	case 2:
+	case UserStatusResigned:
 		return "用户已离职"
-	case 3:
+	case UserStatusDeleted:
 		return "账号已删除"
-	case 4:
+	case UserStatusPendingReview:
 		return "注册审核中"
 	default:
 		return "未知状态"

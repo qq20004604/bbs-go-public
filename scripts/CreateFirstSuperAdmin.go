@@ -49,7 +49,7 @@ func CreateFirstSuperAdmin() {
 		Name:     firstAdminName,
 		Password: firstAdminPassword,
 		IsAdmin:  20,
-		Status:   0,
+		Status:   model.UserStatusNormal,
 		//LastLoginAt: utils.DateTime{},
 		LastLoginIP: "0.0.0.0",
 		Email:       "test@test.test",

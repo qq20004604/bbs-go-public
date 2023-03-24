@@ -65,6 +65,8 @@ runtimeConfig:
     # 不设置时，默认为12345678
     # 注意：长度限制为 6~40，否则无法登陆。如需要更改，请自行更改校验相关逻辑
     FirstAdminPassword: "12345678"
+    # 新账号注册后，需要管理员审批后才能登录。当值为true时，代表必须管理员审批通过后才能登录
+    RegistrationRequiresAdminApproval: false
   dev:
     Env: 'DEV'
     LogLevel: "debug"

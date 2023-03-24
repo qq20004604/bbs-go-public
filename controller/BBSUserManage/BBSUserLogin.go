@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"main/db/model"
 	"main/handlers"
 	"main/service/userService"
 	"main/utils"
@@ -49,7 +50,7 @@ func UserLogin(c *gin.Context) {
 	// 4. 更新用户信息里的最后登录IP和登录地址
 	userService.AfterBBSUserLoginSuccess(c, resUserData.ID)
 
-	utils.SuccessJson(c, "11", gin.H{
+	utils.SuccessJson(c, "登录成功", gin.H{
 		"token":    token,
 		"userInfo": resUserData,
 	})
@@ -81,7 +82,7 @@ func isLoginSuccess(c *gin.Context, loginData *userService.UserLoginRequest) (us
 		return userService.AdvanceBBSUserResponse{}, errors.New("密码错误")
 	}
 	// 如果 user.Status 不为 0，意味着用户状态错误，调用 GetStatusText(user.Status) 则返回错误提示信息
-	if user.Status != 0 {
+	if user.Status != model.UserStatusNormal {
 		msg := fmt.Sprintf("用户状态错误：%s", user.GetBBSStatusText())
 		return userService.AdvanceBBSUserResponse{}, errors.New(msg)
 	}

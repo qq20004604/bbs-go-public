@@ -62,18 +62,19 @@ type RedisConfig struct {
 *				 具体说明参考yml文件
  */
 type RuntimeConfig struct {
-	Env                string        `yaml:"Env,omitempty"`
-	SetReportCaller    bool          `yaml:"SetReportCaller,omitempty"`
-	ServerName         string        `yaml:"ServerName,omitempty"`
-	BaseUrl            string        `yaml:"BaseUrl,omitempty"`
-	ServerURL          string        `yaml:"ServerURL,omitempty"`
-	LogMaxAge          time.Duration `yaml:"LogMaxAge,omitempty"`
-	LogRotationTime    time.Duration `yaml:"LogRotationTime,omitempty"`
-	LogLevel           log.Level     `yaml:"LogLevel"`
-	CreateFirstAdmin   bool          `yaml:"CreateFirstAdmin,omitempty"`
-	FirstAdminAccount  string        `yaml:"FirstAdminAccount,omitempty"`
-	FirstAdminName     string        `yaml:"FirstAdminName,omitempty"`
-	FirstAdminPassword string        `yaml:"FirstAdminPassword,omitempty"`
+	Env                               string        `yaml:"Env,omitempty"`
+	SetReportCaller                   bool          `yaml:"SetReportCaller,omitempty"`
+	ServerName                        string        `yaml:"ServerName,omitempty"`
+	BaseUrl                           string        `yaml:"BaseUrl,omitempty"`
+	ServerURL                         string        `yaml:"ServerURL,omitempty"`
+	LogMaxAge                         time.Duration `yaml:"LogMaxAge,omitempty"`
+	LogRotationTime                   time.Duration `yaml:"LogRotationTime,omitempty"`
+	LogLevel                          log.Level     `yaml:"LogLevel"`
+	CreateFirstAdmin                  bool          `yaml:"CreateFirstAdmin,omitempty"`
+	FirstAdminAccount                 string        `yaml:"FirstAdminAccount,omitempty"`
+	FirstAdminName                    string        `yaml:"FirstAdminName,omitempty"`
+	FirstAdminPassword                string        `yaml:"FirstAdminPassword,omitempty"`
+	RegistrationRequiresAdminApproval bool          `yaml:"RegistrationRequiresAdminApproval,omitempty"`
 }
 
 // CommonConfig

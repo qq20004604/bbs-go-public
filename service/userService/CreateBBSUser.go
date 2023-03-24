@@ -8,13 +8,12 @@ import (
 
 /*CreateBBSUser
 * @Description:	向数据库中插入一条新的用户记录
-* @param userService
+* @param user	用户数据
 * @return error	报错信息
  */
 func CreateBBSUser(user *model.BBSUser) error {
 	// 再基于用户数据并插入到数据库表之前，先执行一些前置操作，例如密码加盐等
 	if err := beforeCreateBBSUser(user); err != nil {
-		//log.Error(err)
 		return err
 	}
 
@@ -48,6 +47,7 @@ func beforeCreateBBSUser(user *model.BBSUser) error {
 		Email:   user.Email,
 		Mobile:  user.Mobile,
 	}
+
 	if isExist, err := IsUserExistByAccount(&userData); err != nil {
 		return err
 	} else if isExist {
