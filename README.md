@@ -1,6 +1,6 @@
-# bbs-go-public
+# bbs-go
 
-用go写的极简论坛（公开版）
+用go写的极简论坛（内部版）
 
 ## 1、运行前配置
 
@@ -25,7 +25,6 @@
 4. 运行项目
 5. 其他：如果需要打包，执行 ``go build``，打包后如果需要在生产环境运行，输入 ``ENVIRONMENT=PROD ./main``
 
-
 ### 1.3 普通环境运行
 
 1. 使用 GoLand ，直接运行 ``./main.go`` 即可
@@ -36,4 +35,18 @@
 1. 默认通过 Docker 来运行，clone 项目后，执行 ``./build.sh`` 即可自动打包；
 2. 剩下的通过 Docker 来启动容器即可；
 
+### 2、交流群
 
+> QQ群：387017550
+
+进群后联系群主即可
+
+### 3、代码
+
+> 前端：
+
+https://github.com/qq20004604/web-for-bbs-go
+
+> 后端
+
+https://github.com/qq20004604/bbs-go-public

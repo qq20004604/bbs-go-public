@@ -22,24 +22,37 @@ type UserLoginRequest struct {
 	Password string `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
 }
 
+type UserRegisterRequest struct {
+	Account   string         `json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Password  string         `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
+	Name      string         `json:"name" binding:"required,max=20" label:"用户名"`
+	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"用户邮箱"`
+	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender    string         `json:"gender" binding:"omitempty,gte=0,lte=4" label:"用户性别"`
+	Birthday  utils.DateTime `json:"birthday"`
+	Signature string         `json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	Company   string         `json:"company" binding:"omitempty,max=20" label:"所在公司"`
+	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
+}
+
 /*BaseBBSUserResponse
 * @Description: 基本的用户信息
  */
 type BaseBBSUserResponse struct {
-	ID        uint           `json:"id"`
-	Account   string         `json:"account"`
-	Name      string         `json:"name"`
-	Status    string         `json:"status"`
-	Email     string         `json:"email"`
-	Mobile    string         `json:"mobile"`
-	Gender    string         `json:"gender"`
-	Birthday  utils.DateTime `json:"birthday"`
-	Signature string         `json:"signature"`
-	IsAdmin   string         `json:"is_admin"`
-	Company   string         `json:"company"`
-	Website   string         `json:"website"`
-	CreatedAt utils.DateTime `json:"created_at"`
-	UpdatedAt utils.DateTime `json:"updated_at"`
+	ID        uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
+	Account   string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Name      string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
+	Status    string         `json:"status" label:"用户状态"`
+	Email     string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile    string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender    string         `json:"gender" label:"性别"`
+	Birthday  utils.DateTime `json:"birthday" label:"生日"`
+	Signature string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	IsAdmin   string         `json:"is_admin" label:"权限等级"`
+	Company   string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website   string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
+	CreatedAt utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"created_at" label:"创建时间"`
+	UpdatedAt utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updated_at" label:"更新时间"`
 }
 
 /*AdvanceBBSUserResponse
@@ -47,25 +60,24 @@ type BaseBBSUserResponse struct {
  */
 type AdvanceBBSUserResponse struct {
 	// BaseBBSUserResponse 基础用户信息
-	ID        uint           `json:"id"`
-	Account   string         `json:"account"`
-	Name      string         `json:"name"`
-	Status    string         `json:"status"`
-	Email     string         `json:"email"`
-	Mobile    string         `json:"mobile"`
-	Gender    string         `json:"gender"`
-	Birthday  utils.DateTime `json:"birthday"`
-	Signature string         `json:"signature"`
-	IsAdmin   string         `json:"is_admin"`
-	Company   string         `json:"company"`
-	Website   string         `json:"website"`
-	CreatedAt utils.DateTime `json:"created_at"`
-	UpdatedAt utils.DateTime `json:"updated_at"`
+	ID        uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
+	Account   string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Name      string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
+	Status    string         `json:"status" label:"用户状态"`
+	Email     string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile    string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender    string         `json:"gender" label:"性别"`
+	Birthday  utils.DateTime `json:"birthday" label:"生日"`
+	Signature string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	IsAdmin   string         `json:"is_admin" label:"权限等级"`
+	Company   string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website   string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
+	CreatedAt utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"created_at" label:"创建时间"`
+	UpdatedAt utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updated_at" label:"更新时间"`
 
 	// 额外用户信息
-	//AuthID      uint           `json:"auth_id"`
-	LastLoginAt utils.DateTime `json:"last_login_at"`
-	LastLoginIP string         `json:"last_login_ip"`
+	LastLoginAt utils.DateTime `gorm:"type:datetime;comment:最后登录时间" json:"last_login_at" label:"最后登录时间"`
+	LastLoginIP string         `gorm:"type:varchar(40);comment:最后登录IP地址，支持IPV6" json:"last_login_ip" label:"最后登录IP地址"`
 }
 
 /*TokenUserInfo

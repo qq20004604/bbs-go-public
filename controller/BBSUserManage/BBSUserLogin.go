@@ -49,7 +49,6 @@ func UserLogin(c *gin.Context) {
 	// 4. 更新用户信息里的最后登录IP和登录地址
 	userService.AfterBBSUserLoginSuccess(c, resUserData.ID)
 
-	// 5. 说明正常，返回用户信息
 	utils.SuccessJson(c, "11", gin.H{
 		"token":    token,
 		"userInfo": resUserData,

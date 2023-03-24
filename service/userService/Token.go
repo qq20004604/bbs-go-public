@@ -135,6 +135,11 @@ func SetBBSUserLoginByRedis(c *gin.Context, token string, userData AdvanceBBSUse
 		db.RedisDB.Del(c, token)
 		return errors.New(msg)
 	}
+
+	// 4. 将 token 再写入 cookie 里，默认过期时间（14天）
+	SetLoginByCookie(c, token)
+
+	// 6. 说明正常，返回用户信息
 	// 此时说明写入成功
 	return nil
 }
@@ -148,21 +153,4 @@ func getRedisKeyByUserID(userID uint) string {
 	// 再以用户ID为 Key，将 token 作为值写入 redis，方便反查
 	userIDKey := fmt.Sprintf("AUTH-PC-BBS-USERID-%d", userID)
 	return userIDKey
-}
-
-/*GetUserInfoFromToken
-* @Description: 拿token，去redis里获取用户信息
-* @param c
- */
-func GetUserInfoFromToken(c *gin.Context) error {
-	token, errGetToken := getToken(c)
-	if errGetToken != nil {
-		return errGetToken
-	}
-
-	// 3. 连接 redis，根据 redis key，获取对应的value
-	redisKey := "bbs-" + token
-	println(redisKey)
-
-	return nil
 }
