@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"main/config"
 	"main/controller"
+	"main/middleware"
 )
 
 /*InternalRouter
@@ -12,5 +13,5 @@ import (
  */
 func InternalRouter(r *gin.Engine) {
 	BaseUrl := config.Config.Runtime.BaseUrl
-	r.POST(BaseUrl+"test", controller.Test)
+	r.POST(BaseUrl+"test", middleware.SetRateLimiter(0.5), controller.Test)
 }

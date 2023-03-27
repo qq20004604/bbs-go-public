@@ -47,23 +47,6 @@ func MakeToken(c *gin.Context) (string, error) {
 	return token, nil
 }
 
-/*getToken
-* @Description: 获取当前用户的token
-* @param c
-* @return string
-* @return error
- */
-func getToken(c *gin.Context) (string, error) {
-	// 1、先拿到用户 token
-	token := c.Request.Header.Get(config.Config.Common.HeaderTokenName)
-
-	// 2. 如果 token 为空，返回错误
-	if token == "" {
-		return "", errors.New("登录过期，请登录")
-	}
-	return token, nil
-}
-
 /*isTokenExistInRedis
 * @Description: 根据入参，去redis里查询该token是否存在
 * @param token
@@ -92,47 +75,33 @@ func SetBBSUserLoginByRedis(c *gin.Context, token string, userData AdvanceBBSUse
 	userIDKey := getRedisKeyByUserID(userData.ID)
 
 	// 2. 根据用户 userIDKey （因为这个是固定的），查询该值是否已经在 Redis 里
-	if isExist, err := isTokenExistInRedis(c, userIDKey); err != nil {
-		// 如果报错
-		errMsg := "redis查询失败，key为：" + userIDKey
-		log.Error(errMsg)
-		return errors.New("redis查询失败")
-	} else if isExist {
-		// 如果已经存在，则根据值去反查另一个 Key，然后把另一个 Key 也删除掉
-		anotherKey, errGetAnotherKey := db.RedisDB.Get(c, userIDKey).Result()
-		if errGetAnotherKey != nil {
-			errMsg := "redis查询失败，key为：" + userIDKey
-			log.Error(errMsg)
-			return errors.New("redis查询失败")
-		}
-		// 查询正常后，删除2个key，并继续后面的操作
-		_, errDel := db.RedisDB.Del(c, userIDKey, anotherKey).Result()
-		if errDel != nil {
-			errMsg := "redis删除失败，key为：" + userIDKey + " 和 " + anotherKey
-			log.Error(errMsg)
-		}
-	}
+	oldToken, errOld := db.RedisDB.Get(c, userIDKey).Result()
 
 	// 3. 将这两个键值对写入 Redis
+	// 创建一个新的 redis 事务，合并操作，减少bug出现的概率
+	pipe := db.RedisDB.TxPipeline()
+	// 查不到的话则不删除
+	if errOld == nil {
+		// 删除之前的两个
+		pipe.Del(c, oldToken, userIDKey)
+	}
+	// 使用 MSet 方法一次性设置两个键值对
+	pipe.MSet(c, token, userIDKey, userIDKey, token)
 	// key的过期时间默认是7天，具体看 yml 配置
 	var expireTime = config.Config.Common.LoginExpireTime * time.Hour
 	if expireTime == 0 {
 		expireTime = 24 * 7 * time.Hour
 	}
-
-	// 将序列化后的JSON数据存储到Redis中
-	if err := db.RedisDB.Set(c, token, userIDKey, expireTime).Err(); err != nil {
+	// 为第一个键（token）设置过期时间
+	pipe.Expire(c, token, expireTime)
+	// 为第二个键（userIDKey）设置过期时间
+	pipe.Expire(c, userIDKey, expireTime)
+	// 执行事务
+	if _, err := pipe.Exec(c); err != nil {
 		msg := fmt.Sprintf("用户信息写入redis失败，key为：%s，value为：%s", token, userIDKey)
 		log.Error(msg)
-		return errors.New(msg)
-	}
-
-	// 再以用户ID为 Key，将 token 作为值写入 redis，方便反查
-	if err := db.RedisDB.Set(c, userIDKey, token, expireTime).Err(); err != nil {
-		msg := fmt.Sprintf("用户信息写入redis失败，key为：%s，value为：%s", token, userIDKey)
-		log.Error(msg)
-		// 写入失败的话，则删除第一步操作
-		db.RedisDB.Del(c, token)
+		log.Error(err)
+		db.RedisDB.Del(c, token, userIDKey)
 		return errors.New(msg)
 	}
 
@@ -153,4 +122,19 @@ func getRedisKeyByUserID(userID uint) string {
 	// 再以用户ID为 Key，将 token 作为值写入 redis，方便反查
 	userIDKey := fmt.Sprintf("AUTH-PC-BBS-USERID-%d", userID)
 	return userIDKey
+}
+
+/*ClearTokenByRedis
+* @Description:		清除 redis 里的 token 信息，同时清除 token 和 用户ID 两组key
+* @param token		入参是 token，或者用户ID的key，都可以
+ */
+func ClearTokenByRedis(c *gin.Context, token string) {
+	// 如果已经存在，则根据值去反查另一个 Key，然后把另一个 Key 也删除掉
+	anotherKey, errGetAnotherKey := db.RedisDB.Get(c, token).Result()
+	if errGetAnotherKey != nil {
+		db.RedisDB.Del(c, token)
+	} else {
+		// 查询正常后，删除2个key，并继续后面的操作
+		db.RedisDB.Del(c, token, anotherKey)
+	}
 }

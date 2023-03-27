@@ -16,7 +16,7 @@ func SetLoginByCookie(c *gin.Context, token string) {
 	if config.Config.Common.LoginExpireTime == 0 {
 		cookieMaxAge = 3600 * 168
 	}
-	c.SetCookie("bbs-token", token, cookieMaxAge, "/", "", false, true)
+	c.SetCookie(config.Config.Common.HeaderTokenName, token, cookieMaxAge, "/", "", false, true)
 }
 
 /*ClearLoginByCookie
@@ -25,5 +25,5 @@ func SetLoginByCookie(c *gin.Context, token string) {
  */
 func ClearLoginByCookie(c *gin.Context) {
 	// 报错，则设置cookie为空
-	c.SetCookie("bbs-token", "", 0, "/", "", false, true)
+	c.SetCookie(config.Config.Common.HeaderTokenName, "", 0, "/", "", false, true)
 }
