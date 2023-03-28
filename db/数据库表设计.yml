@@ -9,7 +9,7 @@ BBSUser: # 论坛用户表
   - LastLoginIP: 用户最后登录IP地址，支持IPV6，string
   - Email: 用户邮箱（长度最大为60），string
   - Mobile: 用户手机号码，string
-  - Gender: 用户性别（0 未知、1 男、2 女），int
+  - Gender: 用户性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他），int
   - Birthday: 用户生日，utils.DateTime
   - Signature: 用户个性签名，string
   - IsAdmin: 是否为管理员(0 普通、10 管理员、20 超级管理员），int

@@ -12,8 +12,8 @@ type CreateUserRequest struct {
 	Password string  `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
 	Email    *string `json:"email" binding:"omitempty,email" label:"邮箱"`          // 用户邮箱（非必填）
 	Mobile   *string `json:"mobile" binding:"omitempty,len=11" label:"手机号"`       // 用户手机号码（非必填）
-	Gender   *int    `json:"gender" binding:"omitempty,oneof=0 1 2" label:"性别"`   // 用户性别（0 未知、1 男、2 女，非必填）
-	Company  *string `json:"company" binding:"omitempty,max=20" label:"公司"`       // 用户所在公司（非必填）
+	Gender   *int    `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
+	Company  *string `json:"company" binding:"omitempty,max=20" label:"公司"` // 用户所在公司（非必填）
 }
 
 // UserLoginRequest 用于接收前端传递的创建新用户所需信息的 JSON 数据
@@ -28,8 +28,8 @@ type UserRegisterRequest struct {
 	Name      string         `json:"name" binding:"required,max=20" label:"用户名"`
 	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender    int            `json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
-	Birthday  utils.DateTime `json:"birthday"`
+	Gender    int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
+	Birthday  utils.DateTime `json:"birthday" binding:"omitempty"`
 	Signature string         `json:"signature" binding:"omitempty,max=255" label:"个性签名"`
 	Company   string         `json:"company" binding:"omitempty,max=20" label:"公司"`
 	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
@@ -59,7 +59,7 @@ type BaseBBSUserResponse struct {
 	StatusText  string         `json:"statusText" label:"用户状态"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（0 未知、1 男、2 女、3南通、4女童）" json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
+	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
 	GenderText  string         `json:"genderText" label:"性别"`
 	Birthday    utils.DateTime `json:"birthday" label:"生日"`
 	Signature   string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
@@ -83,7 +83,7 @@ type AdvanceBBSUserResponse struct {
 	StatusText  string         `json:"statusText" label:"用户状态"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（0 未知、1 男、2 女、3南通、4女童）" json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
+	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
 	GenderText  string         `json:"genderText" label:"性别"`
 	Birthday    utils.DateTime `json:"birthday" label:"生日"`
 	Signature   string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`

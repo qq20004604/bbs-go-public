@@ -20,7 +20,7 @@ type BBSUser struct {
 	LastLoginIP string         `gorm:"type:varchar(40);comment:最后登录IP地址，支持IPV6" json:"lastLoginIP" label:"最后登录IP地址"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱（长度最大为60）" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（0 未知、1 男、2 女、3南通、4女童）" json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
+	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
 	Birthday    utils.DateTime `gorm:"type:date;comment:生日" json:"birthday" label:"生日"`
 	Signature   string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
 	IsAdmin     int            `gorm:"type:tinyint(4);default:0;comment:权限等级(0 普通、10 管理员、20 超级管理员）" json:"isAdmin" label:"权限等级"`
@@ -100,8 +100,12 @@ func (user *BBSUser) GetGender() string {
 		return "男同"
 	case 4:
 		return "女同"
+	case 5:
+		return "未告知"
+	case 6:
+		return "其他"
 	default:
-		return "未知性别"
+		return "未知"
 	}
 }
 

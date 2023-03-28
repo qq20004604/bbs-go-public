@@ -16,7 +16,7 @@ type DateTime struct {
 
 // 2. 为 DateTime 重写 MarshaJSON 和 UnmarshalJSON 方法，在此方法中实现自定义格式的转换；
 func (t *DateTime) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
+	if string(data) == "null" || string(data) == `""` {
 		return nil
 	}
 	var err error
