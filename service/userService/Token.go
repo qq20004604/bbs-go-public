@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 	"main/config"
 	"main/db"
@@ -53,6 +54,12 @@ func MakeToken(c *gin.Context) (string, error) {
  */
 func isTokenExistInRedis(c *gin.Context, token string) (bool, error) {
 	if res, err := db.RedisDB.Exists(c, token).Result(); err != nil {
+		if err == redis.Nil {
+			// 说明键值对不存在
+			return false, nil
+		} else {
+			log.Error("redis查询错误")
+		}
 		return false, err
 	} else if res > 0 {
 		return true, nil
@@ -80,9 +87,15 @@ func SetBBSUserLoginByRedis(c *gin.Context, token string, userData AdvanceBBSUse
 	// 3. 将这两个键值对写入 Redis
 	// 创建一个新的 redis 事务，合并操作，减少bug出现的概率
 	pipe := db.RedisDB.TxPipeline()
-	// 查不到的话则不删除
-	if errOld == nil {
-		// 删除之前的两个
+	if errOld != nil {
+		// errOld == redis.Nil 为true时，这里说明键值对不存在，即 userIDKey 这个key不存在redis里，所以不需要删除
+		// 而为 errOld != redis.Nil时，说明是其他错误（例如连接错误、超时等）
+		if errOld != redis.Nil {
+			// 此时，打印错误日志
+			log.Error(errOld)
+		}
+	} else {
+		// 当这个报错不存在时，说明键值对存在，所以直接都删
 		pipe.Del(c, oldToken, userIDKey)
 	}
 	// 使用 MSet 方法一次性设置两个键值对
@@ -132,9 +145,49 @@ func ClearTokenByRedis(c *gin.Context, token string) {
 	// 如果已经存在，则根据值去反查另一个 Key，然后把另一个 Key 也删除掉
 	anotherKey, errGetAnotherKey := db.RedisDB.Get(c, token).Result()
 	if errGetAnotherKey != nil {
-		db.RedisDB.Del(c, token)
+		// 这个说明是其他错误
+		if errGetAnotherKey != redis.Nil {
+			log.Error("redis查询错误")
+		}
 	} else {
 		// 查询正常后，删除2个key，并继续后面的操作
 		db.RedisDB.Del(c, token, anotherKey)
 	}
+}
+
+/*CheckTokenAvailable
+* @Description: 检查 token 是否有效
+* @param c
+* @param token
+* @return error
+ */
+func CheckTokenAvailable(c *gin.Context, token string) error {
+	// 从 Redis 中查询 token
+	userIDKey, err := db.RedisDB.Get(c, token).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return errors.New("未登录或登录过期，请重新登录")
+		}
+		log.Error(err)
+		return errors.New("服务器错误")
+	}
+
+	// 以查询到的值作为 key 再次查询 Redis
+	redisToken, err := db.RedisDB.Get(c, userIDKey).Result()
+	if err != nil {
+		if err == redis.Nil {
+			db.RedisDB.Del(c, token)
+			return errors.New("未登录或登录过期，请重新登录")
+		}
+		log.Error(err)
+		return errors.New("服务器错误")
+	}
+
+	// 比对查询到的值和 token 是否一致
+	if redisToken != token {
+		db.RedisDB.Del(c, token)
+		return errors.New("未登录或登录过期，请重新登录")
+	}
+
+	return nil
 }

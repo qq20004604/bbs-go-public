@@ -2,7 +2,7 @@ package userService
 
 import (
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"main/config"
 )
 
 /*IsOnline
@@ -12,23 +12,20 @@ import (
 * @return bool	在线返回 true，不在线返回 false
  */
 func IsOnline(c *gin.Context) bool {
-	// 1. 先拿到cookie
-	token, errCookie := c.Cookie("bbs-token")
+	// 1. 先从 cookie 拿到 token
+	token, errCookie := c.Cookie(config.Config.Common.HeaderTokenName)
 	// 如果报错了，一般是没找到这个 cookie，但无论如何，把cookie清除掉
 	if errCookie != nil {
 		ClearLoginByCookie(c)
 		return false
 	}
 
-	// 2. 拿cookie去redis里查询
-	isOnline, err := isTokenExistInRedis(c, token)
-	// 报错的话，一般是系统服务出错
-	if errCookie != nil {
+	// 2. 拿 token 去 redis 里查询该 token 是否有效
+	if err := CheckTokenAvailable(c, token); err != nil {
 		ClearLoginByCookie(c)
-		log.Error(err)
 		return false
 	}
 
 	// 3. 如果能查到（token未过期，则认为在登录，返回true）
-	return isOnline
+	return true
 }
