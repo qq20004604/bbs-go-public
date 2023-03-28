@@ -2,26 +2,43 @@ package userService
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"main/db"
 	"main/db/model"
 )
 
-/*GetBBSUserByID
-* @Description: 根据用户ID获取用户信息
+/*GetAdvanceBBSUserInfoBySelf
+* @Description: 查询当前用户的个人信息
 * @param c
 * @param ID
 * @return error
  */
-func GetBBSUserByID(ID uint) (error, model.BBSUser) {
+func GetAdvanceBBSUserInfoBySelf(c *gin.Context) (error, AdvanceBBSUserResponse) {
+	// 1. 在线检查
+	isOnline, userID := IsOnline(c)
+	if !isOnline {
+		return errors.New("未登录，请登录后再试"), AdvanceBBSUserResponse{}
+	}
+
+	// 2. 查询用户数据
 	var user model.BBSUser
-	db.DbItem.Model(model.BBSUser{}).Where("id = ?", ID).First(&user)
+	db.DbItem.Model(model.BBSUser{}).Where("id = ?", userID).First(&user)
 	if user.ID == 0 {
-		return errors.New("该用户不存在"), model.BBSUser{}
+		return errors.New("该用户不存在"), AdvanceBBSUserResponse{}
 	}
-	if err := beforeGetBBSUser(&user); err != nil {
-		return err, model.BBSUser{}
+
+	// 3. 检查用户状态，如果不正常，则返回其状态。如果禁止某个状态用户登录，则修改这个状态
+	// 但理论上，能登录，就意味着这个账号能正常获取自己的个人数据
+	if user.IsUserStatusNormal() == false {
+		return errors.New(user.GetBBSStatusText()), AdvanceBBSUserResponse{}
 	}
-	return nil, user
+
+	// 4. 将数据转为返回给用户的格式
+	var resUserData AdvanceBBSUserResponse
+	resUserData.ConvertFromBBSUser(&user)
+
+	// 5. 返回数据给调用方
+	return nil, resUserData
 }
 
 /*GetBBSUserByAccount
@@ -37,18 +54,5 @@ func GetBBSUserByAccount(account string) (error, model.BBSUser) {
 	if user.ID == 0 {
 		return errors.New("该用户不存在"), model.BBSUser{}
 	}
-	if err := beforeGetBBSUser(&user); err != nil {
-		return err, model.BBSUser{}
-	}
 	return nil, user
-}
-
-/*beforeGetBBSUser
-* @Description: 	在成功获取到用户信息之后，返回查询到用户信息之前，判断能否正常获取查询结果
-*					这个函数用于处理一些获取用户时的特殊需求
-* @param user
-* @return error
- */
-func beforeGetBBSUser(user *model.BBSUser) error {
-	return nil
 }

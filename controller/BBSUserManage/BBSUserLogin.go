@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"main/db/model"
 	"main/handlers"
 	"main/service/userService"
 	"main/utils"
@@ -81,13 +80,14 @@ func isLoginSuccess(c *gin.Context, loginData *userService.UserLoginRequest) (us
 	if user.Password != pwBySalt {
 		return userService.AdvanceBBSUserResponse{}, errors.New("密码错误")
 	}
-	// 如果 user.Status 不为 0，意味着用户状态错误，调用 GetStatusText(user.Status) 则返回错误提示信息
-	if user.Status != model.UserStatusNormal {
+
+	// 3、检查当前用户状态，判断是否允许登录
+	if user.IsUserStatusNormal() == false {
 		msg := fmt.Sprintf("用户状态错误：%s", user.GetBBSStatusText())
 		return userService.AdvanceBBSUserResponse{}, errors.New(msg)
 	}
 
-	// 3. 将用户信息转为可以返回给用户的信息
+	// 4. 将用户信息转为可以返回给用户的信息
 	var resUserData userService.AdvanceBBSUserResponse
 	resUserData.ConvertFromBBSUser(&user)
 	return resUserData, nil

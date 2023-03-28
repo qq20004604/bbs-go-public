@@ -25,5 +25,5 @@ func SetLoginByCookie(c *gin.Context, token string) {
  */
 func ClearLoginByCookie(c *gin.Context) {
 	// 报错，则设置cookie为空
-	c.SetCookie(config.Config.Common.HeaderTokenName, "", 0, "/", "", false, true)
+	c.SetCookie(config.Config.Common.HeaderTokenName, "", -1, "/", "", false, true)
 }

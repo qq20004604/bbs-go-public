@@ -19,6 +19,8 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"logout", middleware.SetRateLimiter(), BBSUserManage.BBSUserLogout)
 	// 注册账号。每秒0.1次，意思是10秒只能调用一次
 	r.POST(BaseUrl+"register", middleware.SetRateLimiter(0.1), BBSUserManage.RegisterBBSUser)
+	// 获取用户信息
+	r.POST(BaseUrl+"getUserInfo", middleware.SetRateLimiter(), BBSUserManage.GetBBSUserInfo)
 
 	InternalRouter(r)
 }

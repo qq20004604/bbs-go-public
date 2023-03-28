@@ -11,7 +11,7 @@ import (
 * @param c
  */
 func IsOnline(c *gin.Context) {
-	if isOnline := userService.IsOnline(c); isOnline {
+	if isOnline, _ := userService.IsOnline(c); isOnline {
 		utils.SuccessJson(c, "已登录", gin.H{})
 	} else {
 		utils.ErrorJson(c, "未登录")

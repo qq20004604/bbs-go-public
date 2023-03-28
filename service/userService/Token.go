@@ -10,6 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"main/config"
 	"main/db"
+	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -161,15 +163,15 @@ func ClearTokenByRedis(c *gin.Context, token string) {
 * @param token
 * @return error
  */
-func CheckTokenAvailable(c *gin.Context, token string) error {
+func CheckTokenAvailable(c *gin.Context, token string) (error, uint) {
 	// 从 Redis 中查询 token
 	userIDKey, err := db.RedisDB.Get(c, token).Result()
 	if err != nil {
 		if err == redis.Nil {
-			return errors.New("未登录或登录过期，请重新登录")
+			return errors.New("未登录或登录过期，请重新登录"), 0
 		}
 		log.Error(err)
-		return errors.New("服务器错误")
+		return errors.New("服务器错误"), 0
 	}
 
 	// 以查询到的值作为 key 再次查询 Redis
@@ -177,17 +179,34 @@ func CheckTokenAvailable(c *gin.Context, token string) error {
 	if err != nil {
 		if err == redis.Nil {
 			db.RedisDB.Del(c, token)
-			return errors.New("未登录或登录过期，请重新登录")
+			return errors.New("未登录或登录过期，请重新登录"), 0
 		}
 		log.Error(err)
-		return errors.New("服务器错误")
+		return errors.New("服务器错误"), 0
 	}
 
 	// 比对查询到的值和 token 是否一致
 	if redisToken != token {
 		db.RedisDB.Del(c, token)
-		return errors.New("未登录或登录过期，请重新登录")
+		return errors.New("未登录或登录过期，请重新登录"), 0
 	}
-
-	return nil
+	re := regexp.MustCompile(`AUTH-PC-BBS-USERID-(\d+)`)
+	match := re.FindStringSubmatch(userIDKey)
+	if len(match) > 1 {
+		idStr := match[1]
+		id, errMatch := strconv.ParseUint(idStr, 10, 64)
+		if errMatch != nil {
+			// 匹配失败，一般是数字太大，超过 uint 限制
+			log.Error(fmt.Println("Error parsing number:", err))
+			return errors.New("服务器错误"), 0
+		} else {
+			// 理论上，数字太大然后转失败了，需要额外考虑这种情况，但实际上，应该问题不大，毕竟 uint 已经很大了，而且也写不进 redis 里
+			return nil, uint(id)
+		}
+	} else {
+		// 理论上，不太可能出现这种情况，即 token 和 userIDKey 互相匹配存在 redis 里，但匹配不到数据
+		// 只有一种可能，生成 userIDKey 和 获取的正则 不匹配。
+		log.Error("请检查生成 userIDKey 的规则 和 正则匹配的表达式，其是否一致")
+		return errors.New("服务器错误，请联系管理员"), 0
+	}
 }

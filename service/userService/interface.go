@@ -52,20 +52,23 @@ func (registerData *UserRegisterRequest) ConvertToBBSUser(user *model.BBSUser) {
 * @Description: 基本的用户信息
  */
 type BaseBBSUserResponse struct {
-	ID        uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
-	Account   string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
-	Name      string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
-	Status    string         `json:"status" label:"用户状态"`
-	Email     string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
-	Mobile    string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender    string         `json:"gender" label:"性别"`
-	Birthday  utils.DateTime `json:"birthday" label:"生日"`
-	Signature string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
-	IsAdmin   string         `json:"is_admin" label:"权限等级"`
-	Company   string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
-	Website   string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
-	CreatedAt utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"created_at" label:"创建时间"`
-	UpdatedAt utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updated_at" label:"更新时间"`
+	ID          uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
+	Account     string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Name        string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
+	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
+	StatusText  string         `json:"statusText" label:"用户状态"`
+	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（0 未知、1 男、2 女、3南通、4女童）" json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
+	GenderText  string         `json:"genderText" label:"性别"`
+	Birthday    utils.DateTime `json:"birthday" label:"生日"`
+	Signature   string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	IsAdmin     int            `gorm:"type:tinyint(4);default:0;comment:权限等级(0 普通、10 管理员、20 超级管理员）" json:"isAdmin" label:"权限等级"`
+	IsAdminText string         `json:"isAdminText" label:"权限等级"`
+	Company     string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website     string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
+	CreatedAt   utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"createdAt" label:"创建时间"`
+	UpdatedAt   utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updatedAt" label:"更新时间"`
 }
 
 /*AdvanceBBSUserResponse
@@ -73,24 +76,27 @@ type BaseBBSUserResponse struct {
  */
 type AdvanceBBSUserResponse struct {
 	// BaseBBSUserResponse 基础用户信息
-	ID        uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
-	Account   string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
-	Name      string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
-	Status    string         `json:"status" label:"用户状态"`
-	Email     string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
-	Mobile    string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
-	Gender    string         `json:"gender" label:"性别"`
-	Birthday  utils.DateTime `json:"birthday" label:"生日"`
-	Signature string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
-	IsAdmin   string         `json:"is_admin" label:"权限等级"`
-	Company   string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
-	Website   string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
-	CreatedAt utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"created_at" label:"创建时间"`
-	UpdatedAt utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updated_at" label:"更新时间"`
+	ID          uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
+	Account     string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
+	Name        string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
+	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
+	StatusText  string         `json:"statusText" label:"用户状态"`
+	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender      int            `gorm:"type:tinyint(4);default:0;comment:性别（0 未知、1 男、2 女、3南通、4女童）" json:"gender" binding:"omitempty,gte=0,lte=4" label:"性别"`
+	GenderText  string         `json:"genderText" label:"性别"`
+	Birthday    utils.DateTime `json:"birthday" label:"生日"`
+	Signature   string         `gorm:"type:varchar(255);comment:个性签名" json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	IsAdmin     int            `gorm:"type:tinyint(4);default:0;comment:权限等级(0 普通、10 管理员、20 超级管理员）" json:"isAdmin" label:"权限等级"`
+	IsAdminText string         `json:"isAdminText" label:"权限等级"`
+	Company     string         `gorm:"type:varchar(20);comment:用户所在公司" json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website     string         `gorm:"type:varchar(255);comment:用户个人网站" json:"website" binding:"omitempty,max=255" label:"个人网站"`
+	CreatedAt   utils.DateTime `gorm:"type:datetime;not null;comment:创建时间" json:"createdAt" label:"创建时间"`
+	UpdatedAt   utils.DateTime `gorm:"type:datetime;not null;comment:更新时间" json:"updatedAt" label:"更新时间"`
 
 	// 额外用户信息
-	LastLoginAt utils.DateTime `gorm:"type:datetime;comment:最后登录时间" json:"last_login_at" label:"最后登录时间"`
-	LastLoginIP string         `gorm:"type:varchar(40);comment:最后登录IP地址，支持IPV6" json:"last_login_ip" label:"最后登录IP地址"`
+	LastLoginAt utils.DateTime `gorm:"type:datetime;comment:最后登录时间" json:"lastLoginAt" label:"最后登录时间"`
+	LastLoginIP string         `gorm:"type:varchar(40);comment:最后登录IP地址，支持IPV6" json:"lastLoginIP" label:"最后登录IP地址"`
 }
 
 /*TokenUserInfo
@@ -124,13 +130,16 @@ func (baseBBSUser *BaseBBSUserResponse) ConvertFromBBSUser(user *model.BBSUser) 
 	baseBBSUser.ID = user.ID
 	baseBBSUser.Account = user.Account
 	baseBBSUser.Name = user.Name
-	baseBBSUser.Status = user.GetBBSStatusText()
+	baseBBSUser.Status = user.Status
+	baseBBSUser.StatusText = user.GetBBSStatusText()
 	baseBBSUser.Email = user.Email
 	baseBBSUser.Mobile = user.Mobile
-	baseBBSUser.Gender = user.GetGender()
+	baseBBSUser.Gender = user.Gender
+	baseBBSUser.GenderText = user.GetGender()
 	baseBBSUser.Birthday = utils.DateTime{}
 	baseBBSUser.Signature = user.Signature
-	baseBBSUser.IsAdmin = user.GetAdminStatus()
+	baseBBSUser.IsAdmin = user.IsAdmin
+	baseBBSUser.IsAdminText = user.GetAdminStatus()
 	baseBBSUser.Company = user.Company
 	baseBBSUser.Website = user.Website
 	baseBBSUser.CreatedAt = user.CreatedAt
@@ -146,13 +155,16 @@ func (advanceBBSUser *AdvanceBBSUserResponse) ConvertFromBBSUser(user *model.BBS
 	advanceBBSUser.ID = user.ID
 	advanceBBSUser.Account = user.Account
 	advanceBBSUser.Name = user.Name
-	advanceBBSUser.Status = user.GetBBSStatusText()
+	advanceBBSUser.Status = user.Status
+	advanceBBSUser.StatusText = user.GetBBSStatusText()
 	advanceBBSUser.Email = user.Email
 	advanceBBSUser.Mobile = user.Mobile
-	advanceBBSUser.Gender = user.GetGender()
+	advanceBBSUser.Gender = user.Gender
+	advanceBBSUser.GenderText = user.GetGender()
 	advanceBBSUser.Birthday = utils.DateTime{}
 	advanceBBSUser.Signature = user.Signature
-	advanceBBSUser.IsAdmin = user.GetAdminStatus()
+	advanceBBSUser.IsAdmin = user.IsAdmin
+	advanceBBSUser.IsAdminText = user.GetAdminStatus()
 	advanceBBSUser.Company = user.Company
 	advanceBBSUser.Website = user.Website
 	advanceBBSUser.CreatedAt = user.CreatedAt

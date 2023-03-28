@@ -43,6 +43,8 @@ func RegisterBBSUser(c *gin.Context) {
 	if err := userService.CreateBBSUser(&user); err != nil {
 		utils.ErrorJson(c, err.Error())
 	} else {
-		utils.SuccessJson(c, "注册成功", user)
+		var resUserInfo userService.AdvanceBBSUserResponse
+		resUserInfo.ConvertFromBBSUser(&user)
+		utils.SuccessJson(c, "注册成功", resUserInfo)
 	}
 }
