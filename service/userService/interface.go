@@ -121,6 +121,25 @@ type BBSUserExist struct {
 	Mobile  string `json:"mobile"`
 }
 
+/*GetAllUsersInfoRequest
+* @Description: 获取所有用户信息的请求体
+ */
+type GetAllUsersInfoRequest struct {
+	Page uint `json:"page" binding:"required,min=1" label:"页码"`
+}
+
+/*GetAllUsersInfoResponse
+* @Description: 获取所有用户信息的返回内容
+ */
+type GetAllUsersInfoResponse struct {
+	Page         uint `json:"page" label:"页码"`
+	TotalPage    uint `json:"total_page" label:"页码总数"`
+	TotalUser    uint `json:"total_user" label:"用户总数"`
+	CountPerPage uint `json:"count_per_page" label:"每页用户数量"`
+	// 基础的用户信息
+	List []BaseBBSUserResponse
+}
+
 /*ConvertFromBBSUser
 * @Description: 将数据库模型 BBSUser 的数据转为 UserInfoResponse 的结构
 * @param userService

@@ -21,6 +21,8 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"register", middleware.SetRateLimiter(0.1), BBSUserManage.RegisterBBSUser)
 	// 获取用户信息
 	r.POST(BaseUrl+"getUserInfo", middleware.SetRateLimiter(), BBSUserManage.GetBBSUserInfo)
+	// 管理员分页获取所有用户信息
+	r.POST(BaseUrl+"getUsersInfoByPage", middleware.SetRateLimiter(), BBSUserManage.GetUsersInfoByPage)
 
 	InternalRouter(r)
 }
