@@ -11,7 +11,7 @@ import (
 * @param token
  */
 func SetLoginByCookie(c *gin.Context, token string) {
-	// 将 token 再写入 cookie 里，默认过期时间（14天）
+	// 将 token 再写入 cookie 里，默认过期时间（7天）
 	var cookieMaxAge = int(3600 * config.Config.Common.LoginExpireTime)
 	if config.Config.Common.LoginExpireTime == 0 {
 		cookieMaxAge = 3600 * 168

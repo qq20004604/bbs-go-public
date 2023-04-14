@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"main/config"
 	"main/handlers"
 	"main/service/userService"
 	"main/utils"
+	"time"
 )
 
 /*UserLogin
@@ -49,9 +51,13 @@ func UserLogin(c *gin.Context) {
 	// 4. 更新用户信息里的最后登录IP和登录地址
 	userService.AfterBBSUserLoginSuccess(c, resUserData.ID)
 
+	now := time.Now()
+	timeAfter168Hours := now.Add(config.Config.Common.LoginExpireTime * time.Hour)
+	formattedTime := timeAfter168Hours.Format("2006-01-02 15:04:05")
 	utils.SuccessJson(c, "登录成功", gin.H{
-		"token":    token,
-		"userInfo": resUserData,
+		"token":           token,
+		"userInfo":        resUserData,
+		"tokenExpireTime": formattedTime,
 	})
 }
 

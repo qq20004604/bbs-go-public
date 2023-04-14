@@ -120,7 +120,7 @@ func SetBBSUserLoginByRedis(c *gin.Context, token string, userData AdvanceBBSUse
 		return errors.New(msg)
 	}
 
-	// 4. 将 token 再写入 cookie 里，默认过期时间（14天）
+	// 4. 将 token 再写入 cookie 里，默认过期时间（7天）
 	SetLoginByCookie(c, token)
 
 	// 6. 说明正常，返回用户信息
