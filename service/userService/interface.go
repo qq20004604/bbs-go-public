@@ -140,6 +140,14 @@ type GetAllUsersInfoResponse struct {
 	List []BaseBBSUserResponse
 }
 
+/*BatchUpdateUserStatusRequest
+* @Description: 批量更新用户状态
+ */
+type BatchUpdateUserStatusRequest struct {
+	List   []uint `json:"list" binding:"required,dive,required,min=1" label:"用户信息列表"`
+	Status int    `json:"status" binding:"required,min=0,max=4" label:"状态"`
+}
+
 /*ConvertFromBBSUser
 * @Description: 将数据库模型 BBSUser 的数据转为 UserInfoResponse 的结构
 * @param userService
