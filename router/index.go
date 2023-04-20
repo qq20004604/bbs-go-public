@@ -25,6 +25,8 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"getUsersInfoByPage", middleware.SetRateLimiter(), BBSUserManage.GetUsersInfoByPage)
 	// 批量更新用户状态
 	r.POST(BaseUrl+"updateUserStatus", middleware.SetRateLimiter(), BBSUserManage.BatchUpdateUserStatus)
+	// 更新本人信息
+	r.POST(BaseUrl+"updateSelfInfo", middleware.SetRateLimiter(), BBSUserManage.UpdateSelfInfo)
 
 	InternalRouter(r)
 }

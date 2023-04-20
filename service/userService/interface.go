@@ -25,7 +25,7 @@ type UserLoginRequest struct {
 type UserRegisterRequest struct {
 	Account   string         `json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Password  string         `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
-	Name      string         `json:"name" binding:"required,max=20" label:"用户名"`
+	Name      string         `json:"name" binding:"required,min=2,max=20" label:"用户名"`
 	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
 	Gender    int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
@@ -146,6 +146,35 @@ type GetAllUsersInfoResponse struct {
 type BatchUpdateUserStatusRequest struct {
 	List   []uint `json:"list" binding:"required,dive,required,min=1" label:"用户信息列表"`
 	Status int    `json:"status" binding:"required,min=0,max=4" label:"状态"`
+}
+
+/*UpdateSelfInfoRequest
+* @Description: 更新用户信息
+ */
+type UpdateSelfInfoRequest struct {
+	Name      string         `json:"name" binding:"omitempty,min=2,max=20" label:"用户名"`
+	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender    int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
+	Birthday  utils.DateTime `json:"birthday" binding:"omitempty"`
+	Signature string         `json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	Company   string         `json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
+}
+
+/*UpdateUserInfoRequest
+* @Description: 更新指定用户信息
+ */
+type UpdateUserInfoRequest struct {
+	ID        uint           `json:"id" binding:"required" label:"用户ID"`
+	Name      string         `json:"name" binding:"required,min=2,max=20" label:"用户名"`
+	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
+	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
+	Gender    int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
+	Birthday  utils.DateTime `json:"birthday" binding:"omitempty"`
+	Signature string         `json:"signature" binding:"omitempty,max=255" label:"个性签名"`
+	Company   string         `json:"company" binding:"omitempty,max=20" label:"公司"`
+	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
 }
 
 /*ConvertFromBBSUser
