@@ -4,7 +4,7 @@ BBSUser: # 论坛用户表
   - Account: 登录账号，string
   - Name: 用户名，string
   - Password: 密码，string
-  - Status: 用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中），int
+  - Status: 用户状态（10 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中），int
   - LastLoginAt: 用户最后登录时间，utils.DateTime
   - LastLoginIP: 用户最后登录IP地址，支持IPV6，string
   - Email: 用户邮箱（长度最大为60），string

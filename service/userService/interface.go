@@ -55,7 +55,7 @@ type BaseBBSUserResponse struct {
 	ID          uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
 	Account     string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Name        string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
-	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
+	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（10 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
 	StatusText  string         `json:"statusText" label:"用户状态"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
@@ -79,7 +79,7 @@ type AdvanceBBSUserResponse struct {
 	ID          uint           `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id" label:"用户ID"`
 	Account     string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Name        string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
-	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
+	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（10 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
 	StatusText  string         `json:"statusText" label:"用户状态"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile      string         `gorm:"type:varchar(11);comment:手机号码" json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
@@ -137,7 +137,7 @@ type GetAllUsersInfoResponse struct {
 	TotalUser    uint `json:"total_user" label:"用户总数"`
 	CountPerPage uint `json:"count_per_page" label:"每页用户数量"`
 	// 基础的用户信息
-	List []BaseBBSUserResponse
+	List []BaseBBSUserResponse `json:"list"`
 }
 
 /*BatchUpdateUserStatusRequest
@@ -145,7 +145,7 @@ type GetAllUsersInfoResponse struct {
  */
 type BatchUpdateUserStatusRequest struct {
 	List   []uint `json:"list" binding:"required,dive,required,min=1" label:"用户信息列表"`
-	Status int    `json:"status" binding:"required,min=0,max=4" label:"状态"`
+	Status int    `json:"status" binding:"required,oneof=1 2 3 4 10" label:"状态"`
 }
 
 /*UpdateSelfInfoRequest
@@ -192,7 +192,7 @@ func (baseBBSUser *BaseBBSUserResponse) ConvertFromBBSUser(user *model.BBSUser) 
 	baseBBSUser.Mobile = user.Mobile
 	baseBBSUser.Gender = user.Gender
 	baseBBSUser.GenderText = user.GetGender()
-	baseBBSUser.Birthday = utils.DateTime{}
+	baseBBSUser.Birthday = user.Birthday
 	baseBBSUser.Signature = user.Signature
 	baseBBSUser.IsAdmin = user.IsAdmin
 	baseBBSUser.IsAdminText = user.GetAdminStatus()
@@ -217,7 +217,7 @@ func (advanceBBSUser *AdvanceBBSUserResponse) ConvertFromBBSUser(user *model.BBS
 	advanceBBSUser.Mobile = user.Mobile
 	advanceBBSUser.Gender = user.Gender
 	advanceBBSUser.GenderText = user.GetGender()
-	advanceBBSUser.Birthday = utils.DateTime{}
+	advanceBBSUser.Birthday = user.Birthday
 	advanceBBSUser.Signature = user.Signature
 	advanceBBSUser.IsAdmin = user.IsAdmin
 	advanceBBSUser.IsAdminText = user.GetAdminStatus()

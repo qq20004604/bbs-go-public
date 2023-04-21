@@ -15,7 +15,7 @@ type BBSUser struct {
 	Account     string         `gorm:"type:varchar(20);not null;comment:登录账号，长度4~20" json:"account" binding:"required,min=4,max=20" label:"登录账号"`
 	Name        string         `gorm:"type:varchar(20);not null;comment:用户名" json:"name" binding:"required,max=20" label:"用户名"`
 	Password    string         `gorm:"type:varchar(40);not null;comment:密码" json:"password" binding:"required,min=6,max=40" label:"密码"`
-	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（0 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
+	Status      int            `gorm:"type:tinyint(4);not null;default:0;comment:用户状态（10 正常、1 禁言、2 用户已离职、3 账号已删除、4 注册审核中）" json:"status" label:"用户状态"`
 	LastLoginAt utils.DateTime `gorm:"type:datetime;comment:最后登录时间" json:"lastLoginAt" label:"最后登录时间"`
 	LastLoginIP string         `gorm:"type:varchar(40);comment:最后登录IP地址，支持IPV6" json:"lastLoginIP" label:"最后登录IP地址"`
 	Email       string         `gorm:"type:varchar(60);comment:邮箱（长度最大为60）" json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
@@ -46,7 +46,7 @@ func (user *BBSUser) UpdateAfterLogin(ip string) {
 }
 
 const (
-	UserStatusNormal        = 0
+	UserStatusNormal        = 10
 	UserStatusMuted         = 1
 	UserStatusResigned      = 2
 	UserStatusDeleted       = 3

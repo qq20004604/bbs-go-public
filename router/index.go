@@ -17,12 +17,12 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"isOnline", middleware.SetRateLimiter(4), BBSUserManage.IsOnline)
 	// 登出
 	r.POST(BaseUrl+"logout", middleware.SetRateLimiter(), BBSUserManage.BBSUserLogout)
-	// 注册账号。每秒0.1次，意思是10秒只能调用一次
+	// 注册账号。每秒0.1次，意思是10秒只能调用一次，因为可能存在注册失败的问题
 	r.POST(BaseUrl+"register", middleware.SetRateLimiter(0.1), BBSUserManage.RegisterBBSUser)
 	// 获取用户信息
 	r.POST(BaseUrl+"getUserInfo", middleware.SetRateLimiter(), BBSUserManage.GetBBSUserInfo)
 	// 管理员分页获取所有用户信息
-	r.POST(BaseUrl+"getUsersInfoByPage", middleware.SetRateLimiter(), BBSUserManage.GetUsersInfoByPage)
+	r.POST(BaseUrl+"getUsersInfoByPage", middleware.SetRateLimiter(2), BBSUserManage.GetUsersInfoByPage)
 	// 批量更新用户状态
 	r.POST(BaseUrl+"updateUserStatus", middleware.SetRateLimiter(), BBSUserManage.BatchUpdateUserStatus)
 	// 更新本人信息
