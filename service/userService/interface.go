@@ -167,7 +167,7 @@ type UpdateSelfInfoRequest struct {
  */
 type UpdateUserInfoRequest struct {
 	ID        uint           `json:"id" binding:"required" label:"用户ID"`
-	Name      string         `json:"name" binding:"required,min=2,max=20" label:"用户名"`
+	Name      string         `json:"name" binding:"omitempty,min=2,max=20" label:"用户名"`
 	Email     string         `json:"email" binding:"omitempty,email,max=60" label:"邮箱"`
 	Mobile    string         `json:"mobile" binding:"omitempty,len=11" label:"手机号码"`
 	Gender    int            `gorm:"type:tinyint(4);default:0;comment:性别（1 男、2 女、3 男同、4 女同、5 未告知、6 其他）" json:"gender" binding:"omitempty,gte=1,lte=6" label:"性别"`
