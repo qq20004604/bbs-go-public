@@ -21,20 +21,39 @@ func UpdateUserInfo(userInfo UpdateUserInfoRequest) error {
 	updateFields := make(map[string]interface{})
 	if userInfo.Name != "" {
 		updateFields["name"] = userInfo.Name
+
 		// 在更新之前，需要判断数据库里有没有重复的名字，如果有则报错并返回
 		var tempUser model.BBSUser
-		db.DbItem.Model(&model.BBSUser{}).Where("name = ?", userInfo.Name).First(&tempUser)
+		db.DbItem.Model(&model.BBSUser{}).Where("id != ? and name = ?", userInfo.ID, userInfo.Name).First(&tempUser)
 		// 如果能查到这个同名用户，并且这个同名用户不是自己，则报错
 		// 后面这个处理逻辑，主要是避免某些傻逼前端传一个同名 name 给后端
-		if tempUser.ID != 0 && tempUser.ID != userInfo.ID {
+		if tempUser.ID != 0 {
 			return errors.New("用户名已存在，请修改")
 		}
 	}
 	if userInfo.Email != "" {
 		updateFields["email"] = userInfo.Email
+
+		// email 重复判断
+		var tempUser model.BBSUser
+		db.DbItem.Model(&model.BBSUser{}).Where("id != ? and email = ?", userInfo.ID, userInfo.Email).First(&tempUser)
+		// 如果能查到这个同名用户，并且这个同名用户不是自己，则报错
+		// 后面这个处理逻辑，主要是避免某些傻逼前端传一个同名 name 给后端
+		if tempUser.ID != 0 {
+			return errors.New("邮箱已存在，请修改")
+		}
 	}
 	if userInfo.Mobile != "" {
 		updateFields["mobile"] = userInfo.Mobile
+
+		// email 重复判断
+		var tempUser model.BBSUser
+		db.DbItem.Model(&model.BBSUser{}).Where("id != ? and mobile = ?", userInfo.ID, userInfo.Mobile).First(&tempUser)
+		// 如果能查到这个同名用户，并且这个同名用户不是自己，则报错
+		// 后面这个处理逻辑，主要是避免某些傻逼前端传一个同名 name 给后端
+		if tempUser.ID != 0 {
+			return errors.New("手机号码已存在，请修改")
+		}
 	}
 	if userInfo.Gender != 0 {
 		updateFields["gender"] = userInfo.Gender

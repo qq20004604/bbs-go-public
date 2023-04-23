@@ -177,6 +177,21 @@ type UpdateUserInfoRequest struct {
 	Website   string         `json:"website" binding:"omitempty,max=255" label:"个人网站"`
 }
 
+/*UpdateSelfPasswordRequest
+* @Description: 用户本人更新密码
+ */
+type UpdateSelfPasswordRequest struct {
+	Password string `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
+}
+
+/*UpdateUserPasswordRequest
+* @Description: 管理员更新用户密码
+ */
+type UpdateUserPasswordRequest struct {
+	ID       uint   `json:"id" binding:"required" label:"用户ID"`
+	Password string `json:"password" binding:"required,min=6,max=40" label:"密码"` // 用户密码（未加密）
+}
+
 /*ConvertFromBBSUser
 * @Description: 将数据库模型 BBSUser 的数据转为 UserInfoResponse 的结构
 * @param userService

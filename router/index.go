@@ -29,6 +29,10 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"updateSelfInfo", middleware.SetRateLimiter(), BBSUserManage.UpdateSelfInfo)
 	// 管理员修改其他用户信息
 	r.POST(BaseUrl+"updateUserInfo", middleware.SetRateLimiter(), BBSUserManage.UpdateUserInfo)
+	// 用户修改自己的密码
+	r.POST(BaseUrl+"updateSelfPassword", middleware.SetRateLimiter(), BBSUserManage.UpdateSelfPassword)
+	// 管理员修改用户密码
+	r.POST(BaseUrl+"updateUserPassword", middleware.SetRateLimiter(), BBSUserManage.UpdateUserPassword)
 
 	InternalRouter(r)
 }
