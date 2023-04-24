@@ -17,3 +17,37 @@ BBSUser: # 论坛用户表
   - Website: 用户个人网站，string
   - CreatedAt: 创建时间，utils.DateTime
   - UpdatedAt: 更新时间，utils.DateTime
+
+
+Topic: # 主题帖
+  - ID: 帖子的ID
+  - Content: 内容，不超过4000个字符
+  - IsDel: 帖子状态（false正常，true已删除）
+  - CreateIP: 发帖的IP地址，支持IPV6，string
+  - CreatedAt: 发帖时间，utils.DateTime
+  - CreateUserID: 发帖人的ID，uint
+  - LastReplyAt: 最后回复时间，utils.DateTime
+
+  - Title: 帖子标题，不超过30个字
+
+Post: # 回复贴
+  - ID: 帖子的ID
+  - Content: 帖子内容，不超过4000个字符
+  - IsDel: 帖子状态（false正常，true已删除）
+  - CreateIP: 发帖的IP地址，支持IPV6，string
+  - CreatedAt: 发帖时间，utils.DateTime
+  - LastReplyAt: 最后回复时间，utils.DateTime
+  - CreateUserID: 发帖人的ID，uint
+
+  - TopicID: 主题帖的ID
+
+ReplyPost: # 楼主楼
+  - ID: 帖子的ID
+  - Content: 帖子内容，不超过500个字符
+  - IsDel: 帖子状态（false正常，true已删除）
+  - CreateIP: 发帖的IP地址，支持IPV6，string
+  - CreatedAt: 发帖时间，utils.DateTime
+  - UpdatedAt: 更新时间，utils.DateTime
+  - CreateUserID: 发帖人的ID，uint
+
+  - PostID: 回复帖的ID

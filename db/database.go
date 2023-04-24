@@ -75,7 +75,10 @@ func InitDatabase() error {
 		return connectError
 	}
 
-	tableList := []interface{}{&model.BBSUser{}}
+	tableList := []interface{}{
+		&model.BBSUser{},
+		&model.Topic{},
+	}
 
 	log.Info("初始化MySQL表：开始执行")
 	var errorMsg string

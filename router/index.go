@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"main/config"
 	"main/controller/BBSUserManage"
+	"main/controller/Topic"
 	"main/middleware"
 )
 
@@ -33,6 +34,9 @@ func LoadRoute(r *gin.Engine) {
 	r.POST(BaseUrl+"updateSelfPassword", middleware.SetRateLimiter(), BBSUserManage.UpdateSelfPassword)
 	// 管理员修改用户密码
 	r.POST(BaseUrl+"updateUserPassword", middleware.SetRateLimiter(), BBSUserManage.UpdateUserPassword)
+
+	// 发主题帖
+	r.POST(BaseUrl+"createTopic", middleware.SetRateLimiter(1), Topic.CreateTopic)
 
 	InternalRouter(r)
 }
