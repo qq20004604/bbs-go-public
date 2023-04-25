@@ -37,6 +37,8 @@ func LoadRoute(r *gin.Engine) {
 
 	// 发主题帖
 	r.POST(BaseUrl+"createTopic", middleware.SetRateLimiter(1), Topic.CreateTopic)
+	// 分页查看主题帖列表
+	r.POST(BaseUrl+"getTopicListByPage", middleware.SetRateLimiter(2), Topic.GetTopicListByPage)
 
 	InternalRouter(r)
 }
