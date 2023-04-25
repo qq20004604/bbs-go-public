@@ -78,6 +78,7 @@ func InitDatabase() error {
 	tableList := []interface{}{
 		&model.BBSUser{},
 		&model.Topic{},
+		&model.Post{},
 	}
 
 	log.Info("初始化MySQL表：开始执行")

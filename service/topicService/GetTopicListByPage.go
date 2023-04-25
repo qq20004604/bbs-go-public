@@ -34,9 +34,8 @@ func GetNormalTopicListByPage(page uint) GetNormalTopicResponse {
 	// 2. 根据当前页码，返回对应页码的用户列表
 	offset := (page - 1) * TopicPerPage
 	var resList []AllTopicResponse
-	// todo 优化这里的查询数据
 	err := db.DbItem.Table("topic").
-		Select("topic.*, bbs_user.name as create_user_name").
+		Select("topic.*, bbs_user.name as create_user_name, (SELECT COUNT(*) FROM post p WHERE p.topic_id = topic.id AND p.is_del = false) as replay_count").
 		Joins("LEFT JOIN bbs_user ON bbs_user.id = topic.create_user_id").
 		Where("topic.is_del = ?", false).
 		Order("topic.last_reply_at DESC").

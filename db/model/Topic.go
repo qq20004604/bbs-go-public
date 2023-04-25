@@ -18,6 +18,7 @@ type Topic struct {
 	CreateUserID uint           `gorm:"comment:发帖人的ID" json:"createUserID" label:"发帖人的ID"`
 	LastReplyAt  utils.DateTime `gorm:"type:datetime;not null;comment:最后回复时间" json:"last_reply_at" label:"更新时间"`
 	Title        string         `gorm:"type:varchar(30);comment:帖子标题，不超过30个字" json:"title" binding:"required,max=30" label:"帖子标题"`
+	ReplayCount  uint           `gorm:"comment:回帖数量" json:"replay_count" label:"回复数量"`
 }
 
 func (topic Topic) TableName() string {
